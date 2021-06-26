@@ -6,14 +6,35 @@ import React, { useState } from "react";
 
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
 
-const Statistics = (props) => (
-    <div>
-        <h2>Statistics</h2>
-        <p>Good: {props.good}</p>
-        <p>Neutral: {props.neutral}</p>
-        <p>Bad: {props.bad}</p>
-    </div>
-)
+const Statistics = ({good, neutral, bad}) => {
+    if (good === 0 && neutral === 0 && bad === 0){
+        return (
+            <p>No feedback given</p>
+        )
+    }
+
+    const all = good + neutral + bad
+    const avg = (good - bad)/all
+    const positive = (good/all)*100
+
+    return (
+        <div>
+            <h2>Statistics</h2>
+            <p>
+                Good: {good}<br/>
+                Neutral: {neutral}<br/>
+                Bad: {bad}<br/>
+                All: {all}<br/>
+                Average: {avg}<br/>
+                Positive: {positive}%
+            </p>
+        </div>
+    )
+}
+
+// const Advanced = (props) => {
+
+// }
 
 const App = () => {
     const [good, setGood] = useState(0)
