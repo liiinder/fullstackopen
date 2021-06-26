@@ -2,6 +2,25 @@ import React, { useState } from 'react'
 
 const Button = ({onClick,text}) => <button onClick={onClick}>{text}</button>
 
+const Votes = ({votes}) => <div>has {votes} votes</div>
+
+const Best = ({points, anecdotes}) => {
+    const max = Math.max(...points)
+    if (max === 0) {
+        return <h2>No votes has been casted</h2>
+    }
+
+    const best = points.findIndex(point => point === max)
+    return (
+        <div>
+            <h1>Anecdote with most votes</h1>
+            {anecdotes[best]}
+            <Votes votes={max} />
+        </div>
+    )
+}
+
+
 const App = () => {
     const anecdotes = [
         'If it hurts, do it more often',
@@ -12,15 +31,25 @@ const App = () => {
         'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
         'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blod tests when dianosing patients'
     ]
-   
-    const [selected, setSelected] = useState(0)
 
-    const randomSelected = () => setSelected(Math.floor(Math.random() * anecdotes.length))
-    console.log(selected);
+    const [selected, setSelected] = useState(0)
+    const [points, setPoints] = useState(Array(anecdotes.length).fill(0))
+    const copy = [...points]
+
+    const upVote = () => {
+        copy[selected] += 1
+        setPoints(copy)
+    }
+
+    const randomAnecdote = () => setSelected(Math.floor(Math.random() * anecdotes.length))
     return (
         <div>
+            <h1>Anecdote of the day</h1>
             <p>{anecdotes[selected]}</p>
-        <Button onClick={randomSelected} text='Next anecdote' />
+            <Votes votes={copy[selected]}/>
+            <Button onClick={randomAnecdote} text='Next anecdote' />
+            <Button onClick={upVote} text='Vote' />
+            <Best points={copy} anecdotes={anecdotes}/>
         </div>
     )
 }
