@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 
-// const Display = (props) => {
-
-// }
-
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
+
+const Statistic = ({text, value}) => <div>{text}: {value}</div>
 
 const Statistics = ({good, neutral, bad}) => {
     if (good === 0 && neutral === 0 && bad === 0){
@@ -20,21 +18,15 @@ const Statistics = ({good, neutral, bad}) => {
     return (
         <div>
             <h2>Statistics</h2>
-            <p>
-                Good: {good}<br/>
-                Neutral: {neutral}<br/>
-                Bad: {bad}<br/>
-                All: {all}<br/>
-                Average: {avg}<br/>
-                Positive: {positive}%
-            </p>
+            <Statistic text="Good" value={good} />
+            <Statistic text="Neutral" value={neutral} />
+            <Statistic text="Bad" value={bad} />
+            <Statistic text="All" value={all} />
+            <Statistic text="Average" value={avg} />
+            <Statistic text="Positive" value={positive + "%"} />
         </div>
     )
 }
-
-// const Advanced = (props) => {
-
-// }
 
 const App = () => {
     const [good, setGood] = useState(0)
