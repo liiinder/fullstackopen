@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
-
-const Person = ({name, number}) => {
-    return (
-        <li>{name}: {number}</li>
-    )
-}
+import Persons from './components/Persons'
+import PersonForm from './components/PersonForm'
+import Filter from './components/Filter'
  
 const App = () => {
     const [ persons, setPersons ] = useState([
@@ -15,77 +12,51 @@ const App = () => {
     ])
     const [ newName, setNewName ] = useState('')
     const [ newNumber, setNewNumber ] = useState('')
-    const [ newFilter, setNewFilter] = useState ('')
+    const [ filter, setFilter] = useState ('')
 
-    const personsToShow = (newFilter === '')
-        ? persons
-        : persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
+    const handleAddName = (event) => setNewName(event.target.value)
+    const handleAddNumber = (event) => setNewNumber(event.target.value)
+    const handleFilter = (event) => setFilter(event.target.value)
 
-    const addName = (event) => {
+    const addPerson = (event) => {
+        event.preventDefault()
+        console.log('Kommer vi hit?');
         if (persons.find(person => person.name === newName)) {
             alert(`${newName} is already added to the phonebook`)
         }
-        else if (newName === '') {
-            alert(`You have to enter a name`)
-        }
-        else if (newNumber === '') {
-            alert('You have to enter a number')
-        }
         else {
-            event.preventDefault()
-            const nameObject = {
+            const newPerson = {
                 name: newName,
                 number: newNumber,
                 id: persons.length + 1
             }
-            setPersons(persons.concat(nameObject))
-            setNewName('')
-            setNewNumber('')
+            setPersons(persons.concat(newPerson))
         } 
+        setNewName('')
+        setNewNumber('')
     }
 
-    const handleAddName = (event) => {
-        setNewName(event.target.value)
-    }
-
-    const handleAddNumber = (event) => {
-        setNewNumber(event.target.value)
-    }
-
-    const handleFilter = (event) => {
-        setNewFilter(event.target.value)
-    }
 
     return (
         <div>
             <h2>Phonebook</h2>
-            filter shown with <input
-                value={newFilter}
-                onChange={handleFilter}
+            <Filter 
+                filter={filter}
+                onFilterChange={handleFilter}
             />
-            <form onSubmit={addName}>
-                <div>
-                <h2>Add new entry</h2>
-                name: <input 
-                    value={newName}
-                    onChange={handleAddName}
-                />
-                <br />
-                number: <input
-                    value={newNumber}
-                    onChange={handleAddNumber}
-                />
-                </div>
-                <div>
-                    <button type="submit">add</button>
-                </div>
-            </form>
+            <h2>Add new entry</h2>
+            <PersonForm
+                onFormSubmit={addPerson}
+                name={newName}
+                onNameChange={handleAddName}
+                number={newNumber}
+                onNumberChange={handleAddNumber}
+            />
             <h2>Numbers</h2>
-            <ul>
-            {personsToShow.map(person =>
-                <Person key={person.id} name={person.name} number={person.number}/>
-            )}
-            </ul>
+            <Persons
+                persons={persons} 
+                filter={filter}
+            />
         </div>
     )
 }
