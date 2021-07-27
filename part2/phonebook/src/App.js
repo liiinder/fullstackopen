@@ -27,7 +27,6 @@ const App = () => {
 
     const addPerson = (event) => {
         event.preventDefault()
-        console.log('Kommer vi hit?');
         if (persons.find(person => person.name === newName)) {
             alert(`${newName} is already added to the phonebook`)
         }
