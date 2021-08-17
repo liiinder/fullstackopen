@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
-import noteService from './services/notes'
+import noteService from './services/Notes'
 
 const App = () => {
     const [notes, setNotes] = useState([])
     const [newNote, setNewNote] = useState('a new note...')
     const [showAll, setShowAll] = useState(true)
 
-     useEffect(() => {
+    useEffect(() => {
         noteService
             .getAll()
             .then(initialNotes => {

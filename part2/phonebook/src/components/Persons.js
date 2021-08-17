@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Persons = ({persons, filter}) => {
+const Persons = ({persons, filter, onClick}) => {
     const personsToShow = (filter === '')
     ? persons
     : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
@@ -8,7 +8,10 @@ const Persons = ({persons, filter}) => {
     return (
     <ul>
         { personsToShow.map(person => 
-            <li key={person.id}>{person.name}: {person.number}</li>
+            <li key={person.id}>
+                {person.name}: {person.number}
+                <button id={person.id} onClick={onClick}>Delete</button>
+            </li>
         )}
     </ul>
 )}

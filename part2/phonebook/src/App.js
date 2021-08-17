@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
-import axios from 'axios'
+import personService from './services/Persons'
  
 const App = () => {
     const [ persons, setPersons ] = useState([])
@@ -14,16 +14,13 @@ const App = () => {
     const handleAddNumber = (event) => setNewNumber(event.target.value)
     const handleFilter = (event) => setFilter(event.target.value)
 
-    const hook = () => {
-        axios
-            .get('http://localhost:3001/persons')
-            .then(response => {
-                setPersons(response.data)
+    useEffect(() => {
+        personService
+            .getAll()
+            .then(initialPersons => {
+                setPersons(initialPersons)
             })
-    }
-
-    useEffect(hook, [])
-
+    }, [])
 
     const addPerson = (event) => {
         event.preventDefault()
@@ -34,14 +31,26 @@ const App = () => {
             const newPerson = {
                 name: newName,
                 number: newNumber,
-                id: persons.length + 1
+                id: persons[persons.length - 1].id + 1
             }
-            setPersons(persons.concat(newPerson))
-        } 
-        setNewName('')
-        setNewNumber('')
+            personService
+                .create(newPerson)
+                .then(returnedPerson => {
+                    setPersons(persons.concat(returnedPerson))
+                    setNewName('')
+                    setNewNumber('')
+                })
+        }
     }
 
+    const removePerson = event => {
+        event.preventDefault()
+        const soonRemoved = persons.find(person => person.id.toString() === event.target.id)
+        const deleted = personService.remove(soonRemoved)
+        if (deleted) {
+            setPersons(persons.filter(x => x.id !== soonRemoved.id))
+        }
+    }
 
     return (
         <div>
@@ -60,8 +69,9 @@ const App = () => {
             />
             <h2>Numbers</h2>
             <Persons
-                persons={persons} 
+                persons={persons}
                 filter={filter}
+                onClick={removePerson}
             />
         </div>
     )
