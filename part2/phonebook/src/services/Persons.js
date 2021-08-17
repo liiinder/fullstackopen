@@ -12,6 +12,10 @@ const create = newObject => {
     return request.then(response => response.data)
 }
 
+const update = (newObject) => {
+    return axios.put(`${baseUrl}/${newObject.id}`, newObject)
+}
+
 const remove = soonRemoved => {
     if (window.confirm(`Do you really want to delete ${soonRemoved.name}`))
     {
@@ -21,6 +25,6 @@ const remove = soonRemoved => {
     else return false
 }
 
-const personService = { getAll, create, remove }
+const personService = { getAll, create, update, remove }
 
 export default personService

@@ -24,8 +24,18 @@ const App = () => {
 
     const addPerson = (event) => {
         event.preventDefault()
-        if (persons.find(person => person.name === newName)) {
-            alert(`${newName} is already added to the phonebook`)
+        const search = persons.find(person => person.name === newName)
+        if (search) {
+            window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)
+            {
+                search.number = newNumber;
+                personService
+                    .update(search)
+                    .then(
+                        setNewName(''),
+                        setNewNumber('')
+                    )
+            }
         }
         else {
             const newPerson = {
