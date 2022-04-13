@@ -12,6 +12,31 @@ code {
     monospace;
 }
 
+h1 {
+    color: green;
+    font-style: italic;
+}
+
+#root {
+  padding-left: 2rem;
+}
+
 ul {
     list-style-type: none;
+}
+
+.note {
+  color: grey;
+  padding-top: 5px;
+  font-size: 15px;
+}
+
+.error {
+  color: red;
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
 }

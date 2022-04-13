@@ -5,7 +5,7 @@ const Note = ({ note, toggleImportance }) => {
     //     ? 'make not important' : 'make important'
 
     return (
-        <li>
+        <li className='note'>
             <input onClick={toggleImportance} type="checkbox" id={note.id}
             checked={note.important} readOnly
             />
