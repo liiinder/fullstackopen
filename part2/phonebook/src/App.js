@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 import personService from './services/Persons'
  
 const App = () => {
@@ -9,6 +10,7 @@ const App = () => {
     const [ newName, setNewName ] = useState('')
     const [ newNumber, setNewNumber ] = useState('')
     const [ filter, setFilter] = useState ('')
+    const [ message, setMessage] = useState(null)
 
     const handleAddName = (event) => setNewName(event.target.value)
     const handleAddNumber = (event) => setNewNumber(event.target.value)
@@ -27,15 +29,17 @@ const App = () => {
         const search = persons.find(person => person.name === newName)
         if (search) {
             window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)
-            {
                 search.number = newNumber;
                 personService
                     .update(search)
                     .then(
                         setNewName(''),
-                        setNewNumber('')
+                        setNewNumber(''),
+                        setMessage(`Changed ${search.name} number`),
+                        setTimeout(() => {
+                            setMessage(null)
+                        }, 5000)
                     )
-            }
         }
         else {
             const newPerson = {
@@ -49,6 +53,12 @@ const App = () => {
                     setPersons(persons.concat(returnedPerson))
                     setNewName('')
                     setNewNumber('')
+                    setMessage(
+                        `Added '${newPerson.name}'`
+                    )
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 5000)
                 })
         }
     }
@@ -65,6 +75,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={message} />
             <Filter 
                 filter={filter}
                 onFilterChange={handleFilter}

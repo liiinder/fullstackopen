@@ -22,13 +22,18 @@
     },
     {
       "name": "Kristoffer Linder",
-      "number": "070xxxxxxx",
+      "number": "0702729535",
       "id": 5
     },
     {
       "name": "Martin Linder",
       "number": "0700528030",
       "id": 6
+    },
+    {
+      "name": "test",
+      "number": "123",
+      "id": 7
     }
   ]
 }
