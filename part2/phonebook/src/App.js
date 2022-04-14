@@ -35,7 +35,7 @@ const App = () => {
                     .then(
                         setNewName(''),
                         setNewNumber(''),
-                        setMessage(`Changed ${search.name} number`),
+                        setMessage(`Changed ${search.name} number`, 'message'),
                         setTimeout(() => {
                             setMessage(null)
                         }, 5000)
@@ -45,7 +45,7 @@ const App = () => {
             const newPerson = {
                 name: newName,
                 number: newNumber,
-                id: persons[persons.length - 1].id + 1
+                id: persons.length > 0 ? persons[persons.length - 1].id + 1 : 1
             }
             personService
                 .create(newPerson)
@@ -53,9 +53,10 @@ const App = () => {
                     setPersons(persons.concat(returnedPerson))
                     setNewName('')
                     setNewNumber('')
-                    setMessage(
-                        `Added '${newPerson.name}'`
-                    )
+                    setMessage([
+                        `Added ${newPerson.name}`,
+                        'message'
+                    ])
                     setTimeout(() => {
                         setMessage(null)
                     }, 5000)
@@ -66,10 +67,21 @@ const App = () => {
     const removePerson = event => {
         event.preventDefault()
         const soonRemoved = persons.find(person => person.id.toString() === event.target.id)
-        const deleted = personService.remove(soonRemoved)
-        if (deleted) {
-            setPersons(persons.filter(x => x.id !== soonRemoved.id))
-        }
+        personService
+            .remove(soonRemoved)
+            .then(returned => {
+                setPersons(persons.filter(x => x.id !== soonRemoved.id))
+                setMessage([`Information about ${soonRemoved.name} is removed`, 'message'])
+                setTimeout(() => {
+                    setMessage(null)
+                }, 5000)
+            })
+            .catch(error => {
+                setMessage([`Information about ${soonRemoved.name} is already removed`, 'message error'])
+                setTimeout(() => {
+                    setMessage(null)
+                }, 5000)
+            })
     }
 
     return (

@@ -9,7 +9,7 @@ const Persons = ({persons, filter, onClick}) => {
     <ul>
         { personsToShow.map(person => 
             <li key={person.id}>
-                {person.name}: {person.number}
+                {person.id}: {person.name}: {person.number}
                 <button id={person.id} onClick={onClick}>Delete</button>
             </li>
         )}

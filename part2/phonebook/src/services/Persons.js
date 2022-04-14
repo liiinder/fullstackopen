@@ -19,8 +19,7 @@ const update = (newObject) => {
 const remove = soonRemoved => {
     if (window.confirm(`Do you really want to delete ${soonRemoved.name}`))
     {
-        axios.delete(`${baseUrl}/${soonRemoved.id}`)
-        return true
+        return axios.delete(`${baseUrl}/${soonRemoved.id}`)
     }
     else return false
 }
