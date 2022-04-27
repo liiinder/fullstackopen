@@ -9,7 +9,7 @@ const Note = ({ note, toggleImportance }) => {
             <input onClick={toggleImportance} type="checkbox" id={note.id}
             checked={note.important} readOnly
             />
-            {note.content}
+            {note.content + " " + note.id}
             {/* <button onClick={toggleImportance}>{label}</button> */}
         </li>
     )
