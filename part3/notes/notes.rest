@@ -7,6 +7,14 @@ content-type: application/json
 }
 
 ###
+post http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content": "lolol"
+}
+
+###
 GET http://localhost:3001/api/notes
 
 ###
