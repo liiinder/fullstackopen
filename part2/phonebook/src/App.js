@@ -20,7 +20,6 @@ const App = () => {
         personService
             .getAll()
             .then(initialPersons => {
-                console.log('initialPersons', initialPersons)
                 setPersons(initialPersons)
             })
     }, [])
@@ -29,18 +28,32 @@ const App = () => {
         event.preventDefault()
         const search = persons.find(person => person.name === newName)
         if (search) {
-            window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)
+            if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
                 search.number = newNumber;
                 personService
-                    .update(search)
-                    .then(
-                        setNewName(''),
-                        setNewNumber(''),
-                        setMessage(`Changed ${search.name} number`, 'message'),
+                .update(search)
+                .then(
+                    setNewName(''),
+                    setNewNumber(''),
+                    setMessage([`Changed ${search.name}'s number`]),
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 5000)
+                    ).catch(error => {
+                        setMessage([error.message, "error"])
                         setTimeout(() => {
                             setMessage(null)
                         }, 5000)
-                    )
+                    })
+            }
+            else {
+                setNewName('')
+                setNewNumber('')
+                setMessage(["Number was not replaced", "error"])
+                setTimeout(() => {
+                    setMessage(null)
+                }, 5000)
+            }
         }
         else {
             const newPerson = {
@@ -54,10 +67,12 @@ const App = () => {
                     setPersons(persons.concat(returnedPerson))
                     setNewName('')
                     setNewNumber('')
-                    setMessage([
-                        `Added ${newPerson.name}`,
-                        'message'
-                    ])
+                    setMessage([`Added ${newPerson.name}`])
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 5000)
+                }).catch(error => {
+                    setMessage([error.response.data.error, "error"])
                     setTimeout(() => {
                         setMessage(null)
                     }, 5000)
@@ -72,13 +87,13 @@ const App = () => {
             .remove(soonRemoved)
             .then(returned => {
                 setPersons(persons.filter(x => x.id !== soonRemoved.id))
-                setMessage([`Information about ${soonRemoved.name} is removed`, 'message'])
+                setMessage([`Information about ${soonRemoved.name} is removed`])
                 setTimeout(() => {
                     setMessage(null)
                 }, 5000)
             })
             .catch(error => {
-                setMessage([`Information about ${soonRemoved.name} is already removed`, 'message error'])
+                setMessage([`Information about ${soonRemoved.name} is already removed`, 'error'])
                 setTimeout(() => {
                     setMessage(null)
                 }, 5000)

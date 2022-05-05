@@ -5,7 +5,7 @@ const Notification = ({message}) => {
     }
 
     return (
-        <div className={message[1]}>
+        <div className={`message ${message[1]}`}>
             {message[0]}
         </div>
     )
