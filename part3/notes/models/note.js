@@ -1,15 +1,4 @@
-const url = process.env.MONGODB_URI
 const mongoose = require('mongoose')
-
-console.log('connecting to', url)
-
-mongoose.connect(url)
-    .then(result => {
-        console.log('connected to MongoDB')
-    })
-    .catch((error) => {
-        console.log('error connecting to MongoDB:', error.message)
-    })
 
 const noteSchema = new mongoose.Schema({
     content: {
@@ -21,7 +10,7 @@ const noteSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    important: Boolean,
+    important: Boolean
 })
 
 noteSchema.set('toJSON', {
