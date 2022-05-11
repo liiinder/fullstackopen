@@ -5,6 +5,7 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
+const Blog = require('./models/blog')
 require('dotenv').config()
 
 logger.info('connecting to ', config.MONGODB_URI)
@@ -20,14 +21,6 @@ mongoose.connect(config.MONGODB_URI)
 app.use(cors())
 app.use(express.json())
 
-const blogSchema = new mongoose.Schema({
-    title: String,
-    author: String,
-    url: String,
-    likes: Number
-})
-
-const Blog = mongoose.model('Blog', blogSchema)
 
 app.use(middleware.requestLogger)
 
