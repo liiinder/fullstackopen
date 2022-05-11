@@ -1,0 +1,12 @@
+post http://localhost:3001/api/blogs
+content-type: application/json
+
+{
+    "title": "The not so good tutorial",
+    "author": "Alex",
+    "url": "https://www.nostackopen.com",
+    "likes": 0
+}
+
+###
+GET http://localhost:3001/api/blogs
