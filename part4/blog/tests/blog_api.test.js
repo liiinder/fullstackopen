@@ -4,8 +4,6 @@ const app = require('../app')
 const api = supertest(app)
 const helper = require('./test_helpers')
 const Blog = require('../models/blog')
-const blog = require('../models/blog')
-const { notesInDb } = require('../../../part3/notes/tests/test_helpers')
 
 beforeEach(async () => {
     await Blog.deleteMany({})
@@ -69,10 +67,10 @@ describe('Validation', () => {
             .post('/api/blogs')
             .send(newBlog)
             .expect(201)
-    
+
         const blogsAtEnd = await helper.blogsInDb()
         const savedBlog = blogsAtEnd[blogsAtEnd.length - 1]
-    
+
         expect(savedBlog.likes).toBeDefined()
         expect(savedBlog.likes).toEqual(0)
     })
@@ -99,6 +97,42 @@ describe('Validation', () => {
             .post('/api/blogs')
             .send(newBlog)
             .expect(400)
+    })
+})
+
+describe('Deletion of a blog', () => {
+    test('succeeds with satus code 204 if id is valid', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToDelete = blogsAtStart[0]
+
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .expect(204)
+
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+
+        const titles = blogsAtEnd.map(r => r.title)
+
+        expect(titles).not.toContain(blogToDelete.title)
+    })
+})
+
+describe('Update a blog', () => {
+    test('Add likes to a blog', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        let blogToUpdate = blogsAtStart[0]
+
+        blogToUpdate.likes += 5
+
+        const resultBlog = await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(blogToUpdate)
+            .expect(200)
+
+        const processedBlogToView = JSON.parse(JSON.stringify(blogToUpdate))
+        expect(resultBlog.body).toEqual(processedBlogToView)
     })
 })
 
