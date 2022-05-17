@@ -1,6 +1,6 @@
-const { dummy, totalLikes, favoriteBlog } = require('../utils/list_helpers')
+const Blog = require('../models/blog')
 
-const blogs = [
+const initialBlogs = [
     {
         _id: '5a422a851b54a676234d17f7',
         title: 'React patterns',
@@ -51,34 +51,26 @@ const blogs = [
     }
 ]
 
-test('dummy returns one', () => {
-    const blogs = []
-
-    const result = dummy(blogs)
-    expect(result).toBe(1)
-})
-
-describe('total likes', () => {
-    test('of empty list is zero', () => {
-        expect(totalLikes([])).toBe(0)
+const nonExistingId = async () => {
+    const note = new Blog({
+        title: 'New blogs are often bad',
+        author: 'Kristoffer Linder',
+        url: 'www.google.com',
+        likes: 15
     })
+    await note.save()
+    await note.remve()
 
-    test('when list has only one blog, equals the likes of that', () => {
-        expect(totalLikes([{ likes: 10 }])).toBe(10)
-    })
+    return note._id.toString()
+}
 
-    test('of a bigger list is calculated right', () => {
-        expect(totalLikes(blogs)).toBe(36)
-    })
-})
+const blogsInDb = async () => {
+    const blogs = await Blog.find({})
+    return blogs.map(blog => blog.toJSON())
+}
 
-test('favorite blog post', () => {
-    expect(favoriteBlog(blogs)).toEqual({
-        _id: '5a422b3a1b54a676234d17f9',
-        title: 'Canonical string reduction',
-        author: 'Edsger W. Dijkstra',
-        url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
-        likes: 12,
-        __v: 0
-    })
-})
+module.exports = {
+    initialBlogs,
+    nonExistingId,
+    blogsInDb
+}
