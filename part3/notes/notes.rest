@@ -2,9 +2,19 @@ post http://localhost:3001/api/notes
 content-type: application/json
 
 {
-    "content": "REST Client is a good tool for testing a REST-api",
-    "important": true
+    "content": "User is the note creator is at the start sent along the request",
+    "important": true,
+    "userId": "6283dbd4ba4b21643ab9eae8"
 }
+
+###
+
+
+###
+get http://localhost:3001/api/notes
+
+###
+get http://localhost:3001/api/users
 
 ###
 post http://localhost:3001/api/notes

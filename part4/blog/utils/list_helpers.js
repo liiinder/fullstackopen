@@ -1,5 +1,7 @@
 const _ = require('lodash')
 
+// Module for getting specific information from the database
+
 const dummy = (blogs) => {
     if (typeof blogs === 'object') {
         return 1

@@ -5,50 +5,79 @@ const api = supertest(app)
 const helper = require('./test_helpers')
 const Blog = require('../models/blog')
 
+const bcrypt = require('bcrypt')
+const User = require('../models/user')
+
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
 })
 
-test('Blogs are returned as json', async () => {
-    await api
-        .get('/api/blogs')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+describe('initial blogs', () => {
+    test('Blogs are returned as json', async () => {
+        await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+    })
+
+    test('All blogs are returned', async () => {
+        const res = await api.get('/api/blogs')
+        expect(res.body).toHaveLength(helper.initialBlogs.length)
+    })
+
+    test('A specific blog is within the returned blogs', async () => {
+        const res = await api.get('/api/blogs')
+        const titles = res.body.map(r => r.title)
+        expect(titles).toContain('Go To Statement Considered Harmful')
+    })
 })
 
-test('All blogs are returned', async () => {
-    const res = await api.get('/api/blogs')
-    expect(res.body).toHaveLength(helper.initialBlogs.length)
+describe('viewing a specific blog', () => {
+    test('succeeds with a valid id', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToView = blogsAtStart[0]
+
+        const resultBlog = await api
+            .get(`/api/blogs/${blogToView.id}`)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        const processedBlogToView = JSON.parse(JSON.stringify(blogToView))
+        expect(resultBlog.body).toEqual(processedBlogToView)
+    })
+
+    test('fails with status 404 if note does not exist', async () => {
+
+    })
+
+    test('fails with status 404 if id is invalid', async () => {
+
+    })
 })
 
-test('A specific blog is within the returned blogs', async () => {
-    const res = await api.get('/api/blogs')
-    const titles = res.body.map(r => r.title)
-    expect(titles).toContain('Go To Statement Considered Harmful')
-})
+describe('Adding new blogs', () => {
+    test('A valid blog can be added', async () => {
+        const newBlog = {
+            title: 'Nonsence',
+            author: 'Kristoffer Linder',
+            url: 'www.facebook.com',
+            likes: 10
+        }
 
-test('A valid blog can be added', async () => {
-    const newBlog = {
-        title: 'Nonsence',
-        author: 'Kristoffer Linder',
-        url: 'www.facebook.com',
-        likes: 10
-    }
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
 
-    await api
-        .post('/api/blogs')
-        .send(newBlog)
-        .expect(201)
-        .expect('Content-Type', /application\/json/)
-
-    const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-
-    const titles = blogsAtEnd.map(b => b.title)
-    expect(titles).toContain('Nonsence')
-    const authors = blogsAtEnd.map(b => b.author)
-    expect(authors).toContain('Kristoffer Linder')
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+        const titles = blogsAtEnd.map(b => b.title)
+        expect(titles).toContain('Nonsence')
+        const authors = blogsAtEnd.map(b => b.author)
+        expect(authors).toContain('Kristoffer Linder')
+    })
 })
 
 describe('Validation', () => {
@@ -133,6 +162,81 @@ describe('Update a blog', () => {
 
         const processedBlogToView = JSON.parse(JSON.stringify(blogToUpdate))
         expect(resultBlog.body).toEqual(processedBlogToView)
+    })
+})
+
+describe('when there is initially one user in db', () => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+
+        const passwordHash = await bcrypt.hash(process.env.ROOT_PASSWORD, 10)
+        const user = new User({ username: 'root', passwordHash })
+
+        await user.save()
+    })
+
+    test('creation succeeds with a fresh username', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'liiinder',
+            name: 'Kristoffer Linder',
+            password: 'qwerty'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+
+        const usernames = usersAtEnd.map(u => u.username)
+        expect(usernames).toContain(newUser.username)
+    })
+
+    test('creation fails with proper statuscode and message if username already taken', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'root',
+            name: 'Superuser',
+            password: 'qwerty'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(result.body.error).toContain('username must be unique')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toEqual(usersAtStart)
+    })
+
+    test('Password needs to be atleast 3 characters long', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'linder',
+            name: 'Superuser',
+            password: 'qt'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(result.body.error).toContain('Password needs to be atleast 4 characters long')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toEqual(usersAtStart)
     })
 })
 

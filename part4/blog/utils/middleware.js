@@ -1,4 +1,6 @@
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
+const User = require('../models/user')
 
 const requestLogger = (req, res, next) => {
     logger.info('Method:', req.method)
@@ -19,13 +21,37 @@ const errorHandler = (error, req, res, next) => {
         return res.status(400).send({ error: 'malformated id' })
     } else if (error.name === 'ValidationError') {
         return res.status(400).json({ error: error.message })
+    } else if (error.name === 'JsonWebTokenError') {
+        return res.status(401).json({ error: 'invalid token' })
+    } else if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ error: 'token expired' })
     }
 
     next(error)
 }
 
+const tokenExtractor = (req, res, next) => {
+    const auth = req.get('authorization')
+    if (auth && auth.toLowerCase().startsWith('bearer ')) {
+        req.token = auth.substring(7)
+    }
+
+    next()
+}
+
+const userExtractor = async (req, res, next) => {
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+    if (decodedToken) {
+        req.user = await User.findById(decodedToken.id)
+    }
+
+    next()
+}
+
 module.exports = {
     requestLogger,
     unknownEndpoint,
-    errorHandler
+    errorHandler,
+    tokenExtractor,
+    userExtractor
 }

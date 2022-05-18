@@ -13,3 +13,19 @@ GET http://localhost:3001/api/blogs
 
 ### Unknown Endpoint
 GET http://localhost:3001/api/unknown
+
+###
+post http://localhost:3001/api/blogs
+content-type: application/json
+authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxpaWluZGVyIiwiaWQiOiI2Mjg1NGNiMzJhMjY4MzliNDFiODc4MjQiLCJpYXQiOjE2NTI5MDgxMzAsImV4cCI6MTY1MjkxMTczMH0.NdtKvHO1cZlLw2eHtyq9EIwLQccc5JVZBVe4RFujAMg
+
+{
+    "title": "Soon removed",
+    "author": "Kristoffer Linder",
+    "url": "www.aftonbladet.com",
+    "likes": 0
+}
+
+###
+delete http://localhost:3001/api/blogs/628560b4d40192175a970a2b
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxpaWluZGVyIiwiaWQiOiI2Mjg1NGNiMzJhMjY4MzliNDFiODc4MjQiLCJpYXQiOjE2NTI5MDgxMzAsImV4cCI6MTY1MjkxMTczMH0.NdtKvHO1cZlLw2eHtyq9EIwLQccc5JVZBVe4RFujAMg
