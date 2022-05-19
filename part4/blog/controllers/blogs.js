@@ -54,7 +54,8 @@ blogsRouter.put('/:id', userExtractor, async (req, res) => {
             author: body.author,
             url: body.url,
             likes: body.likes,
-            user: req.user.id
+            user: req.user.id,
+            id: blog.id
         }
 
         await Blog.findByIdAndUpdate(req.params.id, updatedBlog, { new: true })

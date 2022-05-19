@@ -8,6 +8,7 @@ const initialBlogs = [
         author: 'Michael Chan',
         url: 'https://reactpatterns.com/',
         likes: 7,
+        user: '6284def87dea5a129fb4b491',
         __v: 0
     },
     {
@@ -16,6 +17,7 @@ const initialBlogs = [
         author: 'Edsger W. Dijkstra',
         url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
         likes: 5,
+        user: '6284def87dea5a129fb4b491',
         __v: 0
     },
     {
@@ -24,6 +26,7 @@ const initialBlogs = [
         author: 'Edsger W. Dijkstra',
         url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
         likes: 12,
+        user: '6284def87dea5a129fb4b491',
         __v: 0
     },
     {
@@ -32,6 +35,7 @@ const initialBlogs = [
         author: 'Robert C. Martin',
         url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
         likes: 10,
+        user: '6284def87dea5a129fb4b491',
         __v: 0
     },
     {
@@ -40,6 +44,7 @@ const initialBlogs = [
         author: 'Robert C. Martin',
         url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
         likes: 0,
+        user: '6284def87dea5a129fb4b491',
         __v: 0
     },
     {
@@ -48,6 +53,7 @@ const initialBlogs = [
         author: 'Robert C. Martin',
         url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
         likes: 2,
+        user: '6284def87dea5a129fb4b491',
         __v: 0
     }
 ]
@@ -57,7 +63,15 @@ const initialUsers = [
         _id: '6284def87dea5a129fb4b491',
         username: 'root',
         name: 'root',
-        notes: [],
+        passwordHash: '$2b$10$PEmK6iFb29INXkI3xT9OcOEJjl3XIINngCp6RKRurnH6g6FpXirom',
+        notes: [
+            '5a422a851b54a676234d17f7',
+            '5a422aa71b54a676234d17f8',
+            '5a422b3a1b54a676234d17f9',
+            '5a422b891b54a676234d17fa',
+            '5a422ba71b54a676234d17fb',
+            '5a422bc61b54a676234d17fc'
+        ],
         __v :0
     },
     {
@@ -93,6 +107,8 @@ const usersInDb = async () => {
     const users = await User.find({})
     return users.map(user => user.toJSON())
 }
+
+// create a user and login - return token + user
 
 module.exports = {
     initialBlogs,
