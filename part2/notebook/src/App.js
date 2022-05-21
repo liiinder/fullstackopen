@@ -16,7 +16,7 @@ const App = () => {
     const [errorMessage, setErrorMessage] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [user, setUser] = useState('')
+    const [user, setUser] = useState(null)
 
     useEffect(() => {
         noteService
@@ -95,9 +95,6 @@ const App = () => {
             setUsername('')
             setPassword('')
         } catch (exception) {
-            console.log('exception', exception)
-            console.log('username', username)
-            console.log('password', password )
             setErrorMessage('Wrong credentials')
             setTimeout(() => {
                 setErrorMessage(null)
