@@ -5,7 +5,6 @@ let token = null
 
 const setToken = newToken => {
     token = `bearer ${newToken}`
-    console.log('token', token)
 }
 
 const getAll = () => {
@@ -13,13 +12,13 @@ const getAll = () => {
     return request.then(response => response.data)
 }
 
-const create = newObject => {
+const create = async newObject => {
     const config = {
         headers: { Authorization: token }
     }
 
-    const request = axios.post(baseUrl, newObject, config)
-    return request.then(res => res.data)
+    const response = await axios.post(baseUrl, newObject, config)
+    return response.data
 }
 
 const blogService = { getAll, create, setToken }

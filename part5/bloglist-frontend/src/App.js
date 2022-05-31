@@ -8,7 +8,7 @@ import blogService from './services/Blogs'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
-    const [errorMessage, setErrorMessage] = useState(null)
+    const [message, setMessage] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
@@ -33,8 +33,13 @@ const App = () => {
             blogService.setToken(user.token)
         }
     }, [])
-
-    const addBlog = (event) => {
+    const setMessageFunc = (message) => {
+        setMessage(message)
+        setTimeout(() => {
+            setMessage(null)
+        }, 5000)
+    }
+    const addBlog = async (event) => {
         event.preventDefault()
         const blogObject = {
             title: title,
@@ -42,14 +47,16 @@ const App = () => {
             url: url
         }
 
-        blogService
-            .create(blogObject)
-            .then(returnedBlog => {
-                setBlogs(blogs.concat(returnedBlog))
-                setTitle('')
-                setAuthor('')
-                setUrl('')
-            })
+        try {
+            const blog = await blogService.create(blogObject)
+            setBlogs(blogs.concat(blog))
+            setMessageFunc([`${title} by ${author} added`])
+            setTitle('')
+            setAuthor('')
+            setUrl('')
+        } catch (exception) {
+            setMessageFunc([`${exception}`, 'error'])
+        }
     }
 
     const loginHandler = async (event) => {
@@ -66,18 +73,16 @@ const App = () => {
             setUser(user)
             setUsername('')
             setPassword('')
+            setMessageFunc([`${user.username} successfully logged in`])
         } catch (exception) {
-            setErrorMessage('Wrong credentials')
-            setTimeout(() => {
-                setErrorMessage(null)
-            }, 5000)
+            setMessageFunc(['wrong username or password', 'error'])
         }
     }
 
     return (
         <div>
             <h1>Blogs</h1>
-            <Notification message={errorMessage} />
+            <Notification message={message} />
 
             {user === null
                 ? <LoginForm
@@ -87,13 +92,17 @@ const App = () => {
                     setPassword={setPassword}
                     loginHandler={loginHandler} />
                 : <div>
-                    <p>{user.name} logged-in</p>
-                    <button onClick={() => {
-                        window.localStorage.removeItem('loggedBlogappUser')
-                        setUser(null)}
-                    }>
-                        logout
-                    </button>
+                    <p>
+                        {user.name}
+                        <button onClick={() => {
+                            window.localStorage.removeItem('loggedBlogappUser')
+                            setMessageFunc([`${user.username} successfully logged out`])
+                            setUser(null)
+                        }
+                        }>
+                            logout
+                        </button>
+                    </p>
                     {<BlogForm 
                         title={title}
                         setTitle={setTitle}
@@ -105,9 +114,6 @@ const App = () => {
                     />}
                 </div>
             }
-            {username}
-            <br/>
-            {password}
             <h2>bloglist</h2>
             {blogs.map(blog =>
                 <Blog key={blog.id} blog={blog} />
